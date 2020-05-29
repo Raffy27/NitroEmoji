@@ -33,6 +33,22 @@ namespace NitroEmoji
         private async void LoadEmojis() {
             StatusLabel.Content = "Loading servers...";
             Progress.IsActive = true;
+            Task<bool> GuildTask = C.GetGuilds();
+            bool success = await GuildTask;
+            if (!success) {
+                Progress.IsActive = false;
+                StatusLabel.Content = "Failed to load servers";
+                return;
+            }
+
+            StatusLabel.Content = "Loading emojis...";
+            Task<bool> LoadTask = C.LoadEmojis();
+            success = await LoadTask;
+            if (!success) {
+                Progress.IsActive = false;
+                StatusLabel.Content = "Failed to load emojis";
+                return;
+            }
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e) {
