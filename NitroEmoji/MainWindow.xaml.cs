@@ -30,6 +30,11 @@ namespace NitroEmoji
             InitializeComponent();
         }
 
+        private async void LoadEmojis() {
+            StatusLabel.Content = "Loading servers...";
+            Progress.IsActive = true;
+        }
+
         private async void LoginButton_Click(object sender, RoutedEventArgs e) {
             StatusLabel.Content = "Logging in...";
             Task<bool> Login = C.Login(EmailBox.Text, PasswordBox.Password);
@@ -41,6 +46,7 @@ namespace NitroEmoji
             } else {
                 StatusLabel.Content = "Login successful";
                 LoginContainer.Visibility = Visibility.Hidden;
+                LoadEmojis();
             }
         }
 

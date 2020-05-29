@@ -5,9 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NitroEmoji"
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+        xmlns:li="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
         mc:Ignorable="d"
         Title="NitroEmoji" Height="500" Width="360" TintColor="#FF2E3440" FallbackColor="#FF2E3440" WindowStartupLocation="CenterScreen" NoiseOpacity="0.01" Background="Transparent" Foreground="#FFB4B4B4">
     <Grid>
+        <li:LoadingIndicator x:Name="Progress" Grid.Column="0" Grid.Row="0" IsActive="False" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource LoadingIndicatorArcsStyleKey}" SpeedRatio="1.5" RenderTransformOrigin="0.5,0.5" Foreground="Gray">
+            <li:LoadingIndicator.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </li:LoadingIndicator.RenderTransform>
+        </li:LoadingIndicator>
         <StackPanel x:Name="LoginContainer" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Height="140" Width="240">
             <Label x:Name="LoginLabel" Content="Login" Foreground="White" HorizontalContentAlignment="Center" Margin="0,0,0,15"/>
             <TextBox x:Name="EmailBox" Height="23" TextWrapping="Wrap" Background="Transparent" Foreground="#FFB4B4B4" Margin="0,0,0,10" Text="Email" BorderBrush="White" BorderThickness="0,0,0,1" MaxLength="999" IsUndoEnabled="False" MaxLines="1" GotFocus="ClearDefault"/>
