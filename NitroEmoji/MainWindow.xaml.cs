@@ -49,6 +49,7 @@ namespace NitroEmoji
                 StatusLabel.Content = "Failed to load emojis";
                 return;
             }
+            StatusLabel.Content = "Waiting";
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e) {
