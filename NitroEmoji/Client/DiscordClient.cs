@@ -42,7 +42,7 @@ namespace NitroEmoji.Client
 
         public string url
         {
-            get { return $"https://cdn.discordapp.com/emojis/{id}." + (animated?"gif":"png"); }
+            get { return $"https://cdn.discordapp.com/emojis/{id}." + (animated?"gif":"png") + "?size=64"; }
         }
 
     }
@@ -65,14 +65,18 @@ namespace NitroEmoji.Client
             }
         }
 
+        public string FromCache(PartialEmoji e) {
+            return Path.Combine(Cache, e.id + (e.animated ? ".gif" : ".png"));
+        }
+
         public async Task<BitmapImage> EmojiFromCache(PartialEmoji e) {
             if (File.Exists(Path.Combine(Cache, e.id))) {
-                return new BitmapImage(new Uri(Path.Combine(Cache, e.id)));
+                return new BitmapImage(new Uri(FromCache(e)));
             }
 
             WebClient w = new WebClient();
-            await w.DownloadFileTaskAsync(e.url, Path.Combine(Cache, e.id));
-            return new BitmapImage(new Uri(Path.Combine(Cache, e.id)));
+            await w.DownloadFileTaskAsync(e.url, FromCache(e));
+            return new BitmapImage(new Uri(FromCache(e)));
         }
 
         public async Task<bool> Login(string email, string pass) {

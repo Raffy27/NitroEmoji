@@ -54,6 +54,13 @@ namespace NitroEmoji
             StatusLabel.Content = img.ToolTip;
         }
 
+        private void EmojiDragged(object sender, MouseEventArgs e) {
+            var img = sender as Image;
+            DragDrop.DoDragDrop(sender as DependencyObject,
+                new DataObject(DataFormats.FileDrop, new string[1] { img.Tag.ToString() }),
+                DragDropEffects.All);
+        } 
+
         private async void DownloadEmojis() {
             foreach(PartialGuild g in C.Guilds) {
                 var disp = new GuildDisplay(g);
@@ -63,7 +70,8 @@ namespace NitroEmoji
                     var img = new Image() {
                         Width = 48,
                         Height = 48,
-                        ToolTip = ':' + e.name + ':'
+                        ToolTip = ':' + e.name + ':',
+                        Tag = C.FromCache(e)
                     };
                     disp.Emojis.Add(img);
                     var data = await C.EmojiFromCache(e);
@@ -72,7 +80,8 @@ namespace NitroEmoji
                     } else {
                         img.Source = data;
                     }                    
-                    img.MouseUp += EmojiClicked;
+                    img.MouseDown += EmojiClicked;
+                    img.MouseMove += EmojiDragged;
                 }
             }
         }
@@ -132,5 +141,6 @@ namespace NitroEmoji
                 }
             }
         }
+
     }
 }
