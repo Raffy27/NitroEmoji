@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace NitroEmoji.Client
 {
@@ -41,7 +42,7 @@ namespace NitroEmoji.Client
 
         public string url
         {
-            get { return $"https://cdn.discordapp.com/emojis/{id}.png"; }
+            get { return $"https://cdn.discordapp.com/emojis/{id}." + (animated?"gif":"png"); }
         }
 
     }
@@ -50,6 +51,11 @@ namespace NitroEmoji.Client
     {
         public string Token;
         public List<PartialGuild> Guilds = new List<PartialGuild>();
+        public string Cache;
+
+        public DiscordClient(string cache) {
+            this.Cache = Path.Combine(Path.GetFullPath("."), cache);
+        }
 
         private void HandleError(WebException e, string taskName) {
             var response = e.Response as HttpWebResponse;
@@ -57,6 +63,16 @@ namespace NitroEmoji.Client
                 var res = new StreamReader(response.GetResponseStream()).ReadToEnd();
                 Debug.WriteLine("{0} failed: {1} => {2}", taskName, (int)response.StatusCode, res);
             }
+        }
+
+        public async Task<BitmapImage> EmojiFromCache(PartialEmoji e) {
+            if (File.Exists(Path.Combine(Cache, e.id))) {
+                return new BitmapImage(new Uri(Path.Combine(Cache, e.id)));
+            }
+
+            WebClient w = new WebClient();
+            await w.DownloadFileTaskAsync(e.url, Path.Combine(Cache, e.id));
+            return new BitmapImage(new Uri(Path.Combine(Cache, e.id)));
         }
 
         public async Task<bool> Login(string email, string pass) {

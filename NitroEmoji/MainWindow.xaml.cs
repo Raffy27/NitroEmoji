@@ -18,18 +18,19 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using NitroEmoji.Client;
+using WpfAnimatedGif;
 
 namespace NitroEmoji
 {
 
     public class GuildDisplay {
         public string Title { get; set; }
-        public List<Image> Emojis { get; set; }
+        public ObservableCollection<Image> Emojis { get; set; }
         public bool IsExpanded { get; set; }
 
         public GuildDisplay(PartialGuild p) {
             this.Title = p.name;
-            Emojis = new List<Image>();
+            Emojis = new ObservableCollection<Image>();
         }
 
     }
@@ -40,7 +41,7 @@ namespace NitroEmoji
     public partial class MainWindow
     {
 
-        private DiscordClient C = new DiscordClient();
+        private DiscordClient C = new DiscordClient("cache");
         private ObservableCollection<GuildDisplay> Servers = new ObservableCollection<GuildDisplay>();
 
         public MainWindow() {
@@ -65,7 +66,12 @@ namespace NitroEmoji
                         ToolTip = ':' + e.name + ':'
                     };
                     disp.Emojis.Add(img);
-                    img.Source = new BitmapImage(new Uri(e.url));
+                    var data = await C.EmojiFromCache(e);
+                    if (e.animated) {
+                        ImageBehavior.SetAnimatedSource(img, data);
+                    } else {
+                        img.Source = data;
+                    }                    
                     img.MouseUp += EmojiClicked;
                 }
             }

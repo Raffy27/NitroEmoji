@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="NitroEmoji" Height="500" Width="360" TintColor="#FF2E3440" FallbackColor="#FF2E3440" WindowStartupLocation="CenterScreen" NoiseOpacity="0.01" Background="Transparent" Foreground="#FFB4B4B4">
     <Grid>
-        <ListView x:Name="EmojiList" Margin="0" Visibility="Hidden" Background="Transparent" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0">
+        <ListView x:Name="EmojiList" Margin="7,0,0,0" Visibility="Hidden" Background="Transparent" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel/>
