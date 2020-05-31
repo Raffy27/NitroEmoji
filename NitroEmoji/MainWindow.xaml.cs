@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +21,19 @@ using NitroEmoji.Client;
 
 namespace NitroEmoji
 {
+
+    public class GuildDisplay {
+        public string Title { get; set; }
+        public List<Image> Emojis { get; set; }
+        public bool IsExpanded { get; set; }
+
+        public GuildDisplay(PartialGuild p) {
+            this.Title = p.name;
+            Emojis = new List<Image>();
+        }
+
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -25,9 +41,34 @@ namespace NitroEmoji
     {
 
         private DiscordClient C = new DiscordClient();
+        private ObservableCollection<GuildDisplay> Servers = new ObservableCollection<GuildDisplay>();
 
         public MainWindow() {
             InitializeComponent();
+            EmojiList.ItemsSource = Servers;
+        }
+
+        private void EmojiClicked(object sender, MouseEventArgs e) {
+            var img = sender as Image;
+            StatusLabel.Content = img.ToolTip;
+        }
+
+        private async void DownloadEmojis() {
+            foreach(PartialGuild g in C.Guilds) {
+                var disp = new GuildDisplay(g);
+                Servers.Add(disp);
+                disp.IsExpanded = g.emojis.Count > 0;
+                foreach(PartialEmoji e in g.emojis) {
+                    var img = new Image() {
+                        Width = 48,
+                        Height = 48,
+                        ToolTip = ':' + e.name + ':'
+                    };
+                    disp.Emojis.Add(img);
+                    img.Source = new BitmapImage(new Uri(e.url));
+                    img.MouseUp += EmojiClicked;
+                }
+            }
         }
 
         private async void LoadEmojis() {
@@ -49,6 +90,11 @@ namespace NitroEmoji
                 StatusLabel.Content = "Failed to load emojis";
                 return;
             }
+            EmojiList.Visibility = Visibility.Visible;
+            DownloadEmojis();
+            Progress.IsActive = false;
+            var bc = new BrushConverter();
+            StatusLabel.Background = bc.ConvertFrom("#BF000000") as Brush;
             StatusLabel.Content = "Waiting";
         }
 

@@ -13,21 +13,22 @@ using System.Windows;
 namespace NitroEmoji.Client
 {
 
-    class PartialGuild
+    public class PartialGuild
     {
         public string id;
         public string name;
+        public List<PartialEmoji> emojis;
 
         public PartialGuild(string id, string name) {
             this.id = id;
             this.name = name;
+            this.emojis = new List<PartialEmoji>();
         }
 
     }
 
-    class PartialEmoji
+    public class PartialEmoji
     {
-        public PartialGuild guild;
         public string id;
         public string name;
         public bool animated;
@@ -36,11 +37,11 @@ namespace NitroEmoji.Client
             this.id = id;
             this.name = name;
             this.animated = animated;
-            this.guild = guild;
         }
 
-        public string GetURL() {
-            return $"https://cdn.discordapp.com/emojis/{id}.png";
+        public string url
+        {
+            get { return $"https://cdn.discordapp.com/emojis/{id}.png"; }
         }
 
     }
@@ -49,7 +50,6 @@ namespace NitroEmoji.Client
     {
         public string Token;
         public List<PartialGuild> Guilds = new List<PartialGuild>();
-        public List<PartialEmoji> Emojis = new List<PartialEmoji>();
 
         private void HandleError(WebException e, string taskName) {
             var response = e.Response as HttpWebResponse;
@@ -104,7 +104,7 @@ namespace NitroEmoji.Client
                         string id = emoji.id;
                         string name = emoji.name;
                         bool animated = emoji.animated;
-                        Emojis.Add(new PartialEmoji(guild, id, name, animated));
+                        guild.emojis.Add(new PartialEmoji(guild, id, name, animated));
                     }
                 } catch (WebException e) {
                     HandleError(e, "Emoji list");

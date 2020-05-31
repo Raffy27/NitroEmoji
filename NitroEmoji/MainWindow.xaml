@@ -9,7 +9,39 @@
         mc:Ignorable="d"
         Title="NitroEmoji" Height="500" Width="360" TintColor="#FF2E3440" FallbackColor="#FF2E3440" WindowStartupLocation="CenterScreen" NoiseOpacity="0.01" Background="Transparent" Foreground="#FFB4B4B4">
     <Grid>
-        <li:LoadingIndicator x:Name="Progress" Grid.Column="0" Grid.Row="0" IsActive="False" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource LoadingIndicatorArcsStyleKey}" SpeedRatio="1.5" RenderTransformOrigin="0.5,0.5" Foreground="Gray">
+        <ListView x:Name="EmojiList" Margin="0" Visibility="Hidden" Background="Transparent" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Expander Header="{Binding Title}" IsExpanded="{Binding IsExpanded}" Margin="0,0,0,10" Foreground="Gray">
+                        <ItemsControl ItemsSource="{Binding Emojis}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Width="{Binding ActualWidth, ElementName=EmojiList}"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </Expander>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                <ContentPresenter />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+        <li:LoadingIndicator x:Name="Progress" Grid.Column="0" Grid.Row="0" IsActive="False" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource LoadingIndicatorArcsStyleKey}" SpeedRatio="1.5" RenderTransformOrigin="0.5,0.5" Foreground="Gray" Margin="156,214,156,188">
             <li:LoadingIndicator.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
@@ -19,12 +51,12 @@
                 </TransformGroup>
             </li:LoadingIndicator.RenderTransform>
         </li:LoadingIndicator>
-        <StackPanel x:Name="LoginContainer" HorizontalAlignment="Center" Margin="0" VerticalAlignment="Center" Height="140" Width="240">
+        <StackPanel x:Name="LoginContainer" HorizontalAlignment="Center" Margin="56,164,56,138" VerticalAlignment="Center" Height="140" Width="240">
             <Label x:Name="LoginLabel" Content="Login" Foreground="White" HorizontalContentAlignment="Center" Margin="0,0,0,15"/>
             <TextBox x:Name="EmailBox" Height="23" TextWrapping="Wrap" Background="Transparent" Foreground="#FFB4B4B4" Margin="0,0,0,10" Text="Email" BorderBrush="White" BorderThickness="0,0,0,1" MaxLength="999" IsUndoEnabled="False" MaxLines="1" GotFocus="ClearDefault"/>
             <PasswordBox x:Name="PasswordBox" Height="23" Background="Transparent" Foreground="#FFB4B4B4" Margin="0,0,0,10" Password="Password" BorderBrush="White" BorderThickness="0,0,0,1" MaxLength="999" GotFocus="ClearDefault"/>
             <Button x:Name="LoginButton" Content="Login" IsDefault="True" Margin="50,0" Click="LoginButton_Click"/>
         </StackPanel>
-        <Label x:Name="StatusLabel" Content="Waiting" VerticalAlignment="Bottom" Foreground="Gray" Margin="0" HorizontalContentAlignment="Right"/>
+        <Label x:Name="StatusLabel" Content="Waiting" VerticalAlignment="Bottom" Foreground="Gray" Margin="0" HorizontalContentAlignment="Right" Grid.Row="1" Height="26" Background="Transparent"/>
     </Grid>
 </fw:AcrylicWindow>
