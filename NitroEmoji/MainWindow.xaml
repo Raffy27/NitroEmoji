@@ -8,6 +8,9 @@
         xmlns:li="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
         mc:Ignorable="d"
         Title="NitroEmoji" Height="500" Width="360" TintColor="#FF2E3440" FallbackColor="#FF2E3440" WindowStartupLocation="CenterScreen" NoiseOpacity="0.01" Background="Transparent" Foreground="#FFB4B4B4">
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static local:MainWindow.AcceptToken}" Executed="TokenChange"/>
+    </Window.CommandBindings>
     <Grid>
         <ListView x:Name="EmojiList" Margin="7,0,0,0" Visibility="Hidden" Background="Transparent" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0">
             <ListView.ItemsPanel>

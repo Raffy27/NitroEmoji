@@ -42,7 +42,7 @@ namespace NitroEmoji.Client
 
         public string url
         {
-            get { return $"https://cdn.discordapp.com/emojis/{id}." + (animated?"gif":"png") + "?size=64"; }
+            get { return $"https://cdn.discordapp.com/emojis/{id}." + (animated ? "gif" : "png"); }
         }
 
     }

@@ -41,12 +41,27 @@ namespace NitroEmoji
     public partial class MainWindow
     {
 
+        public static RoutedCommand AcceptToken = new RoutedCommand();
+
         private DiscordClient C = new DiscordClient("cache");
         private ObservableCollection<GuildDisplay> Servers = new ObservableCollection<GuildDisplay>();
 
         public MainWindow() {
             InitializeComponent();
             EmojiList.ItemsSource = Servers;
+            AcceptToken.InputGestures.Add(new KeyGesture(Key.T, ModifierKeys.Control));
+        }
+
+        private void TokenChange(object sender, ExecutedRoutedEventArgs e) {
+            var t = Clipboard.GetText().Trim('"');
+            if (t.Length < 59) {
+                StatusLabel.Content = "Invalid token";
+                return;
+            }
+            AcceptToken.InputGestures.Clear();
+            C.Token = t;
+            LoginContainer.Visibility = Visibility.Hidden;
+            LoadEmojis();
         }
 
         private void EmojiClicked(object sender, MouseEventArgs e) {
@@ -55,6 +70,8 @@ namespace NitroEmoji
         }
 
         private void EmojiDragged(object sender, MouseEventArgs e) {
+            if (e.LeftButton != MouseButtonState.Pressed) 
+                return;
             var img = sender as Image;
             DragDrop.DoDragDrop(sender as DependencyObject,
                 new DataObject(DataFormats.FileDrop, new string[1] { img.Tag.ToString() }),
