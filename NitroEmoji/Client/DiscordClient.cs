@@ -3,12 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace NitroEmoji.Client
@@ -66,7 +62,7 @@ namespace NitroEmoji.Client
         }
 
         public static bool IDValid(string id) {
-            foreach(var c in id) {
+            foreach (var c in id) {
                 if (!Char.IsNumber(c)) {
                     return false;
                 }
@@ -79,13 +75,17 @@ namespace NitroEmoji.Client
         }
 
         private BitmapImage LoadEmojiUnlocked(PartialEmoji e) {
-            var b = new BitmapImage();
-            b.BeginInit();
-            b.CacheOption = BitmapCacheOption.OnLoad;
-            b.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            b.UriSource = new Uri(FromCache(e));
-            b.EndInit();
-            return b;
+            try {
+                var b = new BitmapImage();
+                b.BeginInit();
+                b.CacheOption = BitmapCacheOption.OnLoad;
+                b.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                b.UriSource = new Uri(FromCache(e));
+                b.EndInit();
+                return b;
+            } catch {
+                return null;
+            }
         }
 
         public async Task<BitmapImage> EmojiFromCache(PartialEmoji e) {
@@ -94,7 +94,12 @@ namespace NitroEmoji.Client
             }
 
             WebClient w = new WebClient();
-            await w.DownloadFileTaskAsync(e.url, FromCache(e));
+            try {
+                await w.DownloadFileTaskAsync(e.url, FromCache(e));
+            } catch (WebException ex) {
+                HandleError(ex, "Emoji download");
+                return null;
+            }
             return LoadEmojiUnlocked(e);
         }
 
@@ -120,7 +125,7 @@ namespace NitroEmoji.Client
             try {
                 var res = await w.DownloadStringTaskAsync("https://discord.com/api/v6/users/@me/guilds");
                 dynamic data = JArray.Parse(res);
-                foreach(dynamic guild in data) {
+                foreach (dynamic guild in data) {
                     string id = guild.id;
                     string name = guild.name;
                     Guilds.Add(new PartialGuild(id, name));
@@ -139,7 +144,7 @@ namespace NitroEmoji.Client
                 try {
                     var res = await w.DownloadStringTaskAsync($"https://discord.com/api/v6/guilds/{guild.id}/emojis");
                     dynamic data = JArray.Parse(res);
-                    foreach(dynamic emoji in data) {
+                    foreach (dynamic emoji in data) {
                         string id = emoji.id;
                         string name = emoji.name;
                         bool animated = emoji.animated;

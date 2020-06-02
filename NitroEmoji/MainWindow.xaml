@@ -7,7 +7,7 @@
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
         xmlns:li="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
         mc:Ignorable="d"
-        Title="NitroEmoji" Height="500" Width="360" TintColor="#FF2E3440" FallbackColor="#FF2E3440" WindowStartupLocation="CenterScreen" NoiseOpacity="0.01" Background="Transparent" Foreground="#FFB4B4B4">
+        Title="NitroEmoji" Height="500" Width="360" TintColor="#FF2E3440" FallbackColor="#FF2E3440" WindowStartupLocation="CenterScreen" NoiseOpacity="0.01" Background="Transparent" Foreground="#FFB4B4B4" Icon="Boost.png">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:MainWindow.AcceptToken}" Executed="TokenChange"/>
         <CommandBinding Command="{x:Static local:MainWindow.DisplayHelp}" Executed="HelpRequested"/>

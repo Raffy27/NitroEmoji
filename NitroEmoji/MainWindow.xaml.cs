@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NitroEmoji.Client;
+using NitroEmoji.Resize;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
-using NitroEmoji.Client;
-using NitroEmoji.Resize;
 using WpfAnimatedGif;
 
 namespace NitroEmoji
@@ -26,7 +13,8 @@ namespace NitroEmoji
 
     public delegate double EmojiEvent(object sender, MouseEventArgs e);
 
-    public class GuildDisplay {
+    public class GuildDisplay
+    {
         public string Title { get; set; }
         public ObservableCollection<Image> Emojis { get; set; }
         public bool IsExpanded { get; set; }
@@ -45,6 +33,9 @@ namespace NitroEmoji
             };
             this.Emojis.Add(img);
             var data = await source.EmojiFromCache(e);
+            if (data == null) {
+                return;
+            }
             if (e.animated) {
                 ImageBehavior.SetAnimatedSource(img, data);
             } else {
@@ -73,12 +64,11 @@ namespace NitroEmoji
             InitializeComponent();
             EmojiList.ItemsSource = Servers;
             AcceptToken.InputGestures.Add(new KeyGesture(Key.T, ModifierKeys.Control));
-            AddExtra.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
             DisplayHelp.InputGestures.Add(new KeyGesture(Key.F1));
         }
 
         private void HelpRequested(object sender, ExecutedRoutedEventArgs e) {
-            var body = "";
+            var body = "Made with ♥ by Raffy E\n\nLogin using token: copy token and Ctrl+T\nAdd custom emoji: copy ID and Ctrl+N\nHelp/About: F1\n\nTo use an emoji in Discord, simply Drag and Drop the preferred emoji into a conversation window.";
             MessageBox.Show(body, "Help");
         }
 
@@ -94,9 +84,10 @@ namespace NitroEmoji
             }
 
             var x = MessageBox.Show("Is this emoji animated?", "New emoji", MessageBoxButton.YesNo);
-            if(x == MessageBoxResult.Cancel) {
+            if (x == MessageBoxResult.Cancel) {
                 return;
             }
+            StatusLabel.Content = "Loading emoji...";
             var p = new PartialEmoji(id, "extra" + id, x == MessageBoxResult.Yes);
 
             GuildDisplay Extra;
@@ -140,7 +131,7 @@ namespace NitroEmoji
         }
 
         private void EmojiDragged(object sender, MouseEventArgs e) {
-            if (e.LeftButton != MouseButtonState.Pressed) 
+            if (e.LeftButton != MouseButtonState.Pressed)
                 return;
             var img = sender as Image;
             DragDrop.DoDragDrop(sender as DependencyObject,
@@ -149,11 +140,11 @@ namespace NitroEmoji
         }
 
         private async Task DownloadEmojis() {
-            foreach(PartialGuild g in C.Guilds) {
+            foreach (PartialGuild g in C.Guilds) {
                 var disp = new GuildDisplay(g);
                 Servers.Add(disp);
                 disp.IsExpanded = g.emojis.Count > 0;
-                foreach(PartialEmoji e in g.emojis) {
+                foreach (PartialEmoji e in g.emojis) {
                     await disp.AddEmoji(e, C, EmojiClicked, EmojiDragged);
                 }
             }
@@ -186,6 +177,8 @@ namespace NitroEmoji
             await ResizeEmojis();
             Progress.IsActive = false;
             StatusLabel.Content = "Waiting";
+
+            AddExtra.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e) {
@@ -197,6 +190,7 @@ namespace NitroEmoji
                 StatusLabel.Content = "Login failed";
                 LoginButton.IsEnabled = true;
             } else {
+                AcceptToken.InputGestures.Clear();
                 StatusLabel.Content = "Login successful";
                 LoginContainer.Visibility = Visibility.Hidden;
                 LoadEmojis();
@@ -204,7 +198,7 @@ namespace NitroEmoji
         }
 
         private void ClearDefault(object sender, RoutedEventArgs e) {
-            if(sender is PasswordBox) {
+            if (sender is PasswordBox) {
                 var t = sender as PasswordBox;
                 if (t.Password == "Password") {
                     t.Password = "";

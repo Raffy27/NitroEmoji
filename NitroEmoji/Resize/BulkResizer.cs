@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.TextFormatting;
 
 namespace NitroEmoji.Resize
 {
@@ -18,8 +14,7 @@ namespace NitroEmoji.Resize
 
             process.EnableRaisingEvents = true;
 
-            process.Exited += (sender, args) =>
-            {
+            process.Exited += (sender, args) => {
                 tcs.SetResult(process.ExitCode);
                 process.Dispose();
             };
@@ -62,7 +57,7 @@ namespace NitroEmoji.Resize
 
         public static async Task ResizePngs(string dir) {
             var d = new DirectoryInfo(dir);
-            foreach(var file in d.GetFiles("*.png")) {
+            foreach (var file in d.GetFiles("*.png")) {
                 await ResizePng(file.FullName);
             }
         }
