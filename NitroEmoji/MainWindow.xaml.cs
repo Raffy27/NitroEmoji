@@ -18,6 +18,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using NitroEmoji.Client;
+using NitroEmoji.Resize;
 using WpfAnimatedGif;
 
 namespace NitroEmoji
@@ -64,6 +65,11 @@ namespace NitroEmoji
             LoadEmojis();
         }
 
+        private async Task ResizeEmojis() {
+            await BulkResizer.ResizeGifs(C.Cache);
+            await BulkResizer.ResizePngs(C.Cache);
+        }
+
         private void EmojiClicked(object sender, MouseEventArgs e) {
             var img = sender as Image;
             StatusLabel.Content = img.ToolTip;
@@ -76,9 +82,9 @@ namespace NitroEmoji
             DragDrop.DoDragDrop(sender as DependencyObject,
                 new DataObject(DataFormats.FileDrop, new string[1] { img.Tag.ToString() }),
                 DragDropEffects.All);
-        } 
+        }
 
-        private async void DownloadEmojis() {
+        private async Task DownloadEmojis() {
             foreach(PartialGuild g in C.Guilds) {
                 var disp = new GuildDisplay(g);
                 Servers.Add(disp);
@@ -123,10 +129,12 @@ namespace NitroEmoji
                 return;
             }
             EmojiList.Visibility = Visibility.Visible;
-            DownloadEmojis();
-            Progress.IsActive = false;
             var bc = new BrushConverter();
             StatusLabel.Background = bc.ConvertFrom("#BF000000") as Brush;
+            await DownloadEmojis();
+            StatusLabel.Content = "Resizing emojis...";
+            await ResizeEmojis();
+            Progress.IsActive = false;
             StatusLabel.Content = "Waiting";
         }
 

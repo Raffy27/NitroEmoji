@@ -69,14 +69,24 @@ namespace NitroEmoji.Client
             return Path.Combine(Cache, e.id + (e.animated ? ".gif" : ".png"));
         }
 
+        private BitmapImage LoadEmojiUnlocked(PartialEmoji e) {
+            var b = new BitmapImage();
+            b.BeginInit();
+            b.CacheOption = BitmapCacheOption.OnLoad;
+            b.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+            b.UriSource = new Uri(FromCache(e));
+            b.EndInit();
+            return b;
+        }
+
         public async Task<BitmapImage> EmojiFromCache(PartialEmoji e) {
             if (File.Exists(Path.Combine(Cache, e.id))) {
-                return new BitmapImage(new Uri(FromCache(e)));
+                return LoadEmojiUnlocked(e);
             }
 
             WebClient w = new WebClient();
             await w.DownloadFileTaskAsync(e.url, FromCache(e));
-            return new BitmapImage(new Uri(FromCache(e)));
+            return LoadEmojiUnlocked(e);
         }
 
         public async Task<bool> Login(string email, string pass) {
