@@ -14,7 +14,6 @@
 ## Screenshots
 <details>
     <summary>Show screenshots</summary>
-    
     <img alt="Login screen" src="https://i.imgur.com/eR2uhAv.png">
     <img alt="Emoji selection" src="https://i.imgur.com/QoUE2C6.png">
     <img alt="Custom emojis" src="https://i.imgur.com/BIaAqia.png">
