@@ -34,7 +34,7 @@ namespace NitroEmoji.Client
         public string name;
         public bool animated;
 
-        public PartialEmoji(PartialGuild guild, string id, string name, bool animated) {
+        public PartialEmoji(string id, string name, bool animated) {
             this.id = id;
             this.name = name;
             this.animated = animated;
@@ -47,7 +47,7 @@ namespace NitroEmoji.Client
 
     }
 
-    class DiscordClient
+    public class DiscordClient
     {
         public string Token;
         public List<PartialGuild> Guilds = new List<PartialGuild>();
@@ -65,6 +65,15 @@ namespace NitroEmoji.Client
             }
         }
 
+        public static bool IDValid(string id) {
+            foreach(var c in id) {
+                if (!Char.IsNumber(c)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public string FromCache(PartialEmoji e) {
             return Path.Combine(Cache, e.id + (e.animated ? ".gif" : ".png"));
         }
@@ -80,7 +89,7 @@ namespace NitroEmoji.Client
         }
 
         public async Task<BitmapImage> EmojiFromCache(PartialEmoji e) {
-            if (File.Exists(Path.Combine(Cache, e.id))) {
+            if (File.Exists(FromCache(e))) {
                 return LoadEmojiUnlocked(e);
             }
 
@@ -134,7 +143,7 @@ namespace NitroEmoji.Client
                         string id = emoji.id;
                         string name = emoji.name;
                         bool animated = emoji.animated;
-                        guild.emojis.Add(new PartialEmoji(guild, id, name, animated));
+                        guild.emojis.Add(new PartialEmoji(id, name, animated));
                     }
                 } catch (WebException e) {
                     HandleError(e, "Emoji list");

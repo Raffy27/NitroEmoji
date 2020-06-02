@@ -10,6 +10,8 @@
         Title="NitroEmoji" Height="500" Width="360" TintColor="#FF2E3440" FallbackColor="#FF2E3440" WindowStartupLocation="CenterScreen" NoiseOpacity="0.01" Background="Transparent" Foreground="#FFB4B4B4">
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static local:MainWindow.AcceptToken}" Executed="TokenChange"/>
+        <CommandBinding Command="{x:Static local:MainWindow.DisplayHelp}" Executed="HelpRequested"/>
+        <CommandBinding Command="{x:Static local:MainWindow.AddExtra}" Executed="AddExtraEmoji"/>
     </Window.CommandBindings>
     <Grid>
         <ListView x:Name="EmojiList" Margin="7,0,0,0" Visibility="Hidden" Background="Transparent" ScrollViewer.CanContentScroll="False" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0">

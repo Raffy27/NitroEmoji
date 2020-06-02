@@ -24,6 +24,8 @@ using WpfAnimatedGif;
 namespace NitroEmoji
 {
 
+    public delegate double EmojiEvent(object sender, MouseEventArgs e);
+
     public class GuildDisplay {
         public string Title { get; set; }
         public ObservableCollection<Image> Emojis { get; set; }
@@ -32,6 +34,24 @@ namespace NitroEmoji
         public GuildDisplay(PartialGuild p) {
             this.Title = p.name;
             Emojis = new ObservableCollection<Image>();
+        }
+
+        public async Task AddEmoji(PartialEmoji e, DiscordClient source, MouseButtonEventHandler onClick, MouseEventHandler onMove) {
+            var img = new Image() {
+                Width = 48,
+                Height = 48,
+                ToolTip = ':' + e.name + ':',
+                Tag = source.FromCache(e)
+            };
+            this.Emojis.Add(img);
+            var data = await source.EmojiFromCache(e);
+            if (e.animated) {
+                ImageBehavior.SetAnimatedSource(img, data);
+            } else {
+                img.Source = data;
+            }
+            img.MouseDown += onClick;
+            img.MouseMove += onMove;
         }
 
     }
@@ -43,6 +63,8 @@ namespace NitroEmoji
     {
 
         public static RoutedCommand AcceptToken = new RoutedCommand();
+        public static RoutedCommand AddExtra = new RoutedCommand();
+        public static RoutedCommand DisplayHelp = new RoutedCommand();
 
         private DiscordClient C = new DiscordClient("cache");
         private ObservableCollection<GuildDisplay> Servers = new ObservableCollection<GuildDisplay>();
@@ -51,6 +73,48 @@ namespace NitroEmoji
             InitializeComponent();
             EmojiList.ItemsSource = Servers;
             AcceptToken.InputGestures.Add(new KeyGesture(Key.T, ModifierKeys.Control));
+            AddExtra.InputGestures.Add(new KeyGesture(Key.N, ModifierKeys.Control));
+            DisplayHelp.InputGestures.Add(new KeyGesture(Key.F1));
+        }
+
+        private void HelpRequested(object sender, ExecutedRoutedEventArgs e) {
+            var body = "";
+            MessageBox.Show(body, "Help");
+        }
+
+        private bool ExtraExists() {
+            return Servers.Count > 0 && Servers[0].Title == "Extra";
+        }
+
+        private async void AddExtraEmoji(object sender, ExecutedRoutedEventArgs e) {
+            var id = Clipboard.GetText();
+            if (!DiscordClient.IDValid(id)) {
+                StatusLabel.Content = "Invalid emoji ID";
+                return;
+            }
+
+            var x = MessageBox.Show("Is this emoji animated?", "New emoji", MessageBoxButton.YesNo);
+            if(x == MessageBoxResult.Cancel) {
+                return;
+            }
+            var p = new PartialEmoji(id, "extra" + id, x == MessageBoxResult.Yes);
+
+            GuildDisplay Extra;
+            if (!ExtraExists()) {
+                Extra = new GuildDisplay(new PartialGuild("0", "Extra"));
+                Servers.Insert(0, Extra);
+            } else {
+                Extra = Servers[0];
+            }
+            Extra.IsExpanded = true;
+
+            await Extra.AddEmoji(p, C, EmojiClicked, EmojiDragged);
+            if (p.animated) {
+                await BulkResizer.ResizeGif(C.FromCache(p));
+            } else {
+                await BulkResizer.ResizePng(C.FromCache(p));
+            }
+            StatusLabel.Content = "Emoji added";
         }
 
         private void TokenChange(object sender, ExecutedRoutedEventArgs e) {
@@ -90,21 +154,7 @@ namespace NitroEmoji
                 Servers.Add(disp);
                 disp.IsExpanded = g.emojis.Count > 0;
                 foreach(PartialEmoji e in g.emojis) {
-                    var img = new Image() {
-                        Width = 48,
-                        Height = 48,
-                        ToolTip = ':' + e.name + ':',
-                        Tag = C.FromCache(e)
-                    };
-                    disp.Emojis.Add(img);
-                    var data = await C.EmojiFromCache(e);
-                    if (e.animated) {
-                        ImageBehavior.SetAnimatedSource(img, data);
-                    } else {
-                        img.Source = data;
-                    }                    
-                    img.MouseDown += EmojiClicked;
-                    img.MouseMove += EmojiDragged;
+                    await disp.AddEmoji(e, C, EmojiClicked, EmojiDragged);
                 }
             }
         }
