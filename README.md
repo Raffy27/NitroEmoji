@@ -48,4 +48,4 @@ Dev environment:
 For active releases and pre-compiled binaries, see <a href="https://github.com/Raffy27/NitroEmoji/releases" target="_blank">Releases</a>.
 
 ## License
-This project is licensed under the MIT License -  see the <a href="https://github.com/Raffy27/NitroEmoji/blob/master/LICENSE" target="_blank">LICENSE</a> file for details. For the dependencies, all rights belong to their respective owners. These should be used according to their respective licenses.![][image_ref_mt9roddj]
+This project is licensed under the MIT License -  see the <a href="https://github.com/Raffy27/NitroEmoji/blob/master/LICENSE" target="_blank">LICENSE</a> file for details. For the dependencies, all rights belong to their respective owners. These should be used according to their respective licenses.
