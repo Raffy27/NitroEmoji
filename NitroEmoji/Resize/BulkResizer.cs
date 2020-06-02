@@ -46,7 +46,7 @@ namespace NitroEmoji.Resize
 
         public static async Task ResizePng(string path) {
             var b = new BitmapImage(new Uri(path));
-            int max = (int)Math.Max(b.Width, b.Height);
+            int max = (int)Math.Max(b.PixelWidth, b.PixelHeight);
             if (max <= 50) {
                 return;
             }
